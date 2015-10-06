@@ -999,7 +999,17 @@ var Select = React.createClass({
 		return React.createElement(
 			'div',
 			{ ref: 'wrapper', className: selectClass },
-			React.createElement('input', { type: 'hidden', ref: 'value', name: this.props.name, value: this.state.value, disabled: this.props.disabled }),
+			React.createElement(
+				'select',
+				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: _.pluck(this.state.values, 'value'), disabled: this.props.disabled, readOnly: true },
+				_.map(this.state.values, function (value) {
+					return React.createElement(
+						'option',
+						{ value: value.value, key: value.value },
+						value.label
+					);
+				})
+			),
 			React.createElement(
 				'div',
 				{ className: 'Select-control', ref: 'control', onKeyDown: this.handleKeyDown, onMouseDown: this.handleMouseDown, onTouchEnd: this.handleMouseDown },
