@@ -340,7 +340,11 @@ var Select = React.createClass({
 				document.removeEventListener('click', _this._closeMenuIfClickedOutside);
 			}
 		};
-		this.setState(this.getStateFromValue(this.props.value));
+
+		// Use an defaultValue if this is not controlled
+		var defaultValue = this.props.value ? this.props.value : this.props.defaultValue;
+
+		this.setState(this.getStateFromValue(defaultValue));
 	},
 
 	componentDidMount: function componentDidMount() {
@@ -368,7 +372,7 @@ var Select = React.createClass({
 				filteredOptions: this.filterOptions(newProps.options)
 			});
 		}
-		if (newProps.value !== this.state.value || newProps.placeholder !== this.props.placeholder || optionsChanged) {
+		if (newProps.value && newProps.value !== this.state.value || newProps.placeholder !== this.props.placeholder || optionsChanged) {
 			var setState = function setState(newState) {
 				_this2.setState(_this2.getStateFromValue(newProps.value, newState && newState.options || newProps.options, newProps.placeholder));
 			};
@@ -1112,7 +1116,7 @@ var Select = React.createClass({
 			{ ref: 'wrapper', className: selectClass },
 			React.createElement(
 				'select',
-				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: _.pluck(this.state.values, 'value'), disabled: this.props.disabled, readOnly: true },
+				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: this.state.value.split(this.props.delimiter), disabled: this.props.disabled },
 				_.map(this.state.values, function (value) {
 					return React.createElement(
 						'option',
