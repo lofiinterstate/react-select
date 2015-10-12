@@ -1000,13 +1000,22 @@ var Select = React.createClass({
 			);
 		}
 
+		var currentValues = this.state.values;
+
+		if (currentValues.length === 0) {
+			currentValues = [{
+				value: '',
+				label: 'Unselected'
+			}];
+		}
+
 		return React.createElement(
 			'div',
 			{ ref: 'wrapper', className: selectClass },
 			React.createElement(
 				'select',
-				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: this.state.value.split(this.props.delimiter), disabled: this.props.disabled },
-				_.map(this.state.values, function (value) {
+				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: currentValues, disabled: this.props.disabled, readOnly: true },
+				_.map(currentValues, function (value) {
 					return React.createElement(
 						'option',
 						{ value: value.value, key: value.value },

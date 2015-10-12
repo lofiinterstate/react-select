@@ -898,11 +898,20 @@ var Select = React.createClass({
 			input = <div className="Select-input">&nbsp;</div>;
 		}
 
+		var currentValues = this.state.values;
+
+		if (currentValues.length === 0) {
+			currentValues = [{
+				value: '',
+				label: 'Unselected'
+			}];
+		}
+
 		return (
 			<div ref="wrapper" className={selectClass}>
-				<select className="hidden" ref="value" name={this.props.name} multiple={true} value={this.state.value.split(this.props.delimiter)} disabled={this.props.disabled}>
+				<select className="hidden" ref="value" name={this.props.name} multiple={true} value={currentValues} disabled={this.props.disabled} readOnly={true}>
 					{
-						_.map(this.state.values, function(value) {
+						_.map(currentValues, function(value) {
 							return (
 								<option value={value.value} key={value.value}>{value.label}</option>
 							)
