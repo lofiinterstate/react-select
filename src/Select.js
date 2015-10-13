@@ -909,7 +909,7 @@ var Select = React.createClass({
 
 		return (
 			<div ref="wrapper" className={selectClass}>
-				<select className="hidden" ref="value" name={this.props.name} multiple={true} value={currentValues} disabled={this.props.disabled} readOnly={true}>
+				<select className="hidden" ref="value" name={this.props.name} multiple={true} value={_.pluck(currentValues, 'value')} disabled={this.props.disabled} readOnly={true}>
 					{
 						_.map(currentValues, function(value) {
 							return (

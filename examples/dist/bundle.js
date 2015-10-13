@@ -1125,7 +1125,7 @@ var Select = React.createClass({
 			{ ref: 'wrapper', className: selectClass },
 			React.createElement(
 				'select',
-				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: currentValues, disabled: this.props.disabled, readOnly: true },
+				{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: _.pluck(currentValues, 'value'), disabled: this.props.disabled, readOnly: true },
 				_.map(currentValues, function (value) {
 					return React.createElement(
 						'option',
