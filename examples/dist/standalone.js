@@ -1002,13 +1002,6 @@ var Select = React.createClass({
 
 		var currentValues = this.state.values;
 
-		if (currentValues.length === 0) {
-			currentValues = [{
-				value: '',
-				label: 'Unselected'
-			}];
-		}
-
 		return React.createElement(
 			'div',
 			{ ref: 'wrapper', className: selectClass },

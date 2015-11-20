@@ -900,13 +900,6 @@ var Select = React.createClass({
 
 		var currentValues = this.state.values;
 
-		if (currentValues.length === 0) {
-			currentValues = [{
-				value: '',
-				label: 'Unselected'
-			}];
-		}
-
 		return (
 			<div ref="wrapper" className={selectClass}>
 				<select className="hidden" ref="value" name={this.props.name} multiple={true} value={_.pluck(currentValues, 'value')} disabled={this.props.disabled} readOnly={true}>
