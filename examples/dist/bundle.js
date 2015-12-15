@@ -62,7 +62,8 @@ var Async = _react2['default'].createClass({
 		loadingPlaceholder: _react2['default'].PropTypes.string, // replaces the placeholder while options are loading
 		minimumInput: _react2['default'].PropTypes.number, // the minimum number of characters that trigger loadOptions
 		noResultsText: _react2['default'].PropTypes.string, // placeholder displayed when there are no matching search results (shared with Select)
-		placeholder: _react2['default'].PropTypes.string, // field placeholder, displayed when there's no value (shared with Select)
+		placeholder: _react2['default'].PropTypes.oneOfType([// field placeholder, displayed when there's no value (shared with Select)
+		_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]),
 		searchingText: _react2['default'].PropTypes.string, // message to display while options are loading
 		searchPromptText: _react2['default'].PropTypes.string },
 	// label to prompt for search input
@@ -397,8 +398,8 @@ var Select = _react2['default'].createClass({
 		autofocus: _react2['default'].PropTypes.bool, // autofocus the component on mount
 		backspaceRemoves: _react2['default'].PropTypes.bool, // whether backspace removes an item if there is no text input
 		className: _react2['default'].PropTypes.string, // className for the outer element
-		clearAllText: _react2['default'].PropTypes.string, // title for the "clear" control when multi: true
-		clearValueText: _react2['default'].PropTypes.string, // title for the "clear" control
+		clearAllText: _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]), // title for the "clear" control when multi: true
+		clearValueText: _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]), // title for the "clear" control
 		clearable: _react2['default'].PropTypes.bool, // should it be possible to reset value
 		delimiter: _react2['default'].PropTypes.string, // delimiter to use to join multiple values for the hidden field value
 		disabled: _react2['default'].PropTypes.bool, // whether the Select is disabled or not
@@ -412,12 +413,14 @@ var Select = _react2['default'].createClass({
 		labelKey: _react2['default'].PropTypes.string, // path of the label value in option objects
 		matchPos: _react2['default'].PropTypes.string, // (any|start) match the start or entire string when filtering
 		matchProp: _react2['default'].PropTypes.string, // (any|label|value) which option property to filter on
+		scrollMenuIntoView: _react2['default'].PropTypes.bool, // boolean to enable the viewport to shift so that the full menu fully visible when engaged
+		menuBuffer: _react2['default'].PropTypes.number, // optional buffer (in px) between the bottom of the viewport and the bottom of the menu
 		menuStyle: _react2['default'].PropTypes.object, // optional style to apply to the menu
 		menuContainerStyle: _react2['default'].PropTypes.object, // optional style to apply to the menu container
 		multi: _react2['default'].PropTypes.bool, // multi-value input
 		name: _react2['default'].PropTypes.string, // generates a hidden <input /> tag with this field name for html forms
 		newOptionCreator: _react2['default'].PropTypes.func, // factory to create new options when allowCreate set
-		noResultsText: _react2['default'].PropTypes.string, // placeholder displayed when there are no matching search results
+		noResultsText: _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]), // placeholder displayed when there are no matching search results
 		onBlur: _react2['default'].PropTypes.func, // onBlur handler: function (event) {}
 		onChange: _react2['default'].PropTypes.func, // onChange handler: function (newValue) {}
 		onFocus: _react2['default'].PropTypes.func, // onFocus handler: function (event) {}
@@ -427,7 +430,7 @@ var Select = _react2['default'].createClass({
 		optionComponent: _react2['default'].PropTypes.func, // option component to render in dropdown
 		optionRenderer: _react2['default'].PropTypes.func, // optionRenderer: function (option) {}
 		options: _react2['default'].PropTypes.array, // array of options
-		placeholder: _react2['default'].PropTypes.string, // field placeholder, displayed when there's no value
+		placeholder: _react2['default'].PropTypes.oneOfType([_react2['default'].PropTypes.string, _react2['default'].PropTypes.node]), // field placeholder, displayed when there's no value
 		searchable: _react2['default'].PropTypes.bool, // whether to enable searching feature or not
 		simpleValue: _react2['default'].PropTypes.bool, // pass the value to onChange as a simple value (legacy pre 1.0 mode), defaults to false
 		style: _react2['default'].PropTypes.object, // optional style to apply to the control
@@ -458,6 +461,8 @@ var Select = _react2['default'].createClass({
 			labelKey: 'label',
 			matchPos: 'any',
 			matchProp: 'any',
+			scrollMenuIntoView: true,
+			menuBuffer: 0,
 			multi: false,
 			noResultsText: 'No results found',
 			optionComponent: _Option2['default'],
@@ -497,6 +502,12 @@ var Select = _react2['default'].createClass({
 			var menuRect = menuDOM.getBoundingClientRect();
 			if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
 				menuDOM.scrollTop = focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight;
+			}
+		}
+		if (this.props.scrollMenuIntoView && this.refs.menuContainer) {
+			var menuContainerRect = this.refs.menuContainer.getBoundingClientRect();
+			if (window.innerHeight < menuContainerRect.bottom + this.props.menuBuffer) {
+				window.scrollTo(0, window.scrollY + menuContainerRect.bottom + this.props.menuBuffer - window.innerHeight);
 			}
 		}
 	},
@@ -994,13 +1005,18 @@ var Select = _react2['default'].createClass({
 	},
 
 	renderHiddenField: function renderHiddenField(valueArray) {
-		var _this5 = this;
-
 		if (!this.props.name) return;
-		var value = valueArray.map(function (i) {
-			return stringifyValue(i[_this5.props.valueKey]);
-		}).join(this.props.delimiter);
-		return _react2['default'].createElement('input', { type: 'hidden', ref: 'value', name: this.props.name, value: value, disabled: this.props.disabled });
+		return _react2['default'].createElement(
+			'select',
+			{ className: 'hidden', ref: 'value', name: this.props.name, multiple: true, value: _.pluck(valueArray, 'value'), disabled: this.props.disabled, readOnly: true },
+			_.map(valueArray, function (value) {
+				return _react2['default'].createElement(
+					'option',
+					{ value: value.value, key: value.value },
+					value.label
+				);
+			})
+		);
 	},
 
 	getFocusableOption: function getFocusableOption(selectedOption) {
