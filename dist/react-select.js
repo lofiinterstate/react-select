@@ -1012,7 +1012,7 @@ var Select = React.createClass({
 					return React.createElement(
 						'option',
 						{ value: value.value, key: value.value },
-						value.label
+						value.value
 					);
 				})
 			),

@@ -906,7 +906,7 @@ var Select = React.createClass({
 					{
 						_.map(currentValues, function(value) {
 							return (
-								<option value={value.value} key={value.value}>{value.label}</option>
+								<option value={value.value} key={value.value}>{value.value}</option>
 							)
 						})
 					}
