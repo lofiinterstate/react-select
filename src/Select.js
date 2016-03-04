@@ -900,11 +900,19 @@ var Select = React.createClass({
 
 		var currentValues = this.state.values;
 
+        if (this.props.multi) {
+            var selectValue = currentValues.map(function(value) {
+                return value.value;
+            });
+        } else {
+            var selectValue = this.state.value;
+        }
+
 		return (
 			<div ref="wrapper" className={selectClass}>
-				<select className="hidden" ref="value" name={this.props.name} multiple={this.props.multi} value={this.props.multi ? _.pluck(currentValues, 'value') : this.state.value} disabled={this.props.disabled} readOnly={true}>
+				<select className="hidden" ref="value" name={this.props.name} multiple={this.props.multi} value={selectValue} disabled={this.props.disabled} readOnly={true}>
 					{
-						_.map(currentValues, function(value) {
+						currentValues.map(function(value) {
 							return (
 								<option value={value.value} key={value.value}>{value.value}</option>
 							)
