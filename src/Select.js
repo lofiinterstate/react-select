@@ -908,9 +908,15 @@ var Select = React.createClass({
             var selectValue = this.state.value;
         }
 
+        // Make sure our multi selects are arrays
+        var selectName = this.props.name;
+        if (this.props.multi && this.props.name.indexOf('[]') !== this.props.name.length - 2) {
+            selectName += '[]';
+        }
+
 		return (
 			<div ref="wrapper" className={selectClass}>
-				<select className="hidden" ref="value" name={this.props.name} multiple={this.props.multi} value={selectValue} disabled={this.props.disabled} readOnly={true}>
+				<select className="hidden" ref="value" name={selectName} multiple={this.props.multi} value={selectValue} disabled={this.props.disabled} readOnly={true}>
 					{
 						currentValues.map(function(value) {
 							return (
